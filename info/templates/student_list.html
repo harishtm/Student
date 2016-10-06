@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>Student Data</title>
+    <script src="/static/js/jquery-1.10.2.min.js"></script>
+    <script>
+        $(function(){
+            var URL;
+            var NEXTURL,PREVURL
+            if(!$('#idNext').attr('href') || $('#idPrev').attr('href')){
+                URL = '/api/list-student/'
+            }
+            execute(URL)
+            function execute(URL){
+                $("#stdata > tbody").html("");
+                $.ajax({
+                    url : URL,
+                    type : 'GET',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader ("Authorization", "Token "+"{{ request.session.HTTP_AUTHORIZATION }}");
+                    },
+                    success : function(data){
+                        //console.log(data.results)
+                        res = data.results
+                        for(i=0;i<res.length;i++){
+                            //console.log(res[i].name)
+                    var tr = $('<tr><td>'+res[i].name+'</td><td>'+res[i].age+'</td><td>'+res[i].address+'</td><td>'+res[i].phone+'</td</tr>');
+                            tr.appendTo('#stdata');
+                        }
+                        if(data.next != null){
+                            $('a#idNext').removeAttr('data-key')
+                            $('a#idNext').attr('data-key',data.next);
+                            NEXTURL = data.next.split(':')[2].slice(4);
+                        }
+                        if(data.previous){
+                            $('a#idPrev').attr('data-key',data.previous);
+                            PREVURL = data.previous.split(':')[2].slice(4);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        //console.log(textStatus, errorThrown,jqXHR.responseJSON.detail);
+                        alert(jqXHR.responseJSON.detail)
+                    }
+                });
+            }
+            $('a#idNext').click(function(){
+                //URL = $(this).data('key').split(':')[2].slice(4);
+                URL = NEXTURL
+                //console.log("Click Next",$(this).data('key'))
+                execute(URL)
+            });
+            $('a#idPrev').click(function(){
+                URL = PREVURL;
+                //URL = $(this).data('key').split(':')[2].slice(4);
+                execute(URL)
+            });
+        })
+    </script>
+</head>
+
+<body>
+
+<table border=1 id="stdata">
+    <thead>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Address</th>
+        <th>Phone</th>
+    </thead>
+</table>
+
+<div id="pagination">
+    <a id="idNext" href="javascript:void(0);">Next</a>
+    <a id="idPrev" href="javascript:void(0);">Prev</a>
+</div>
+
+</body>
+</html>
