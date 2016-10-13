@@ -50,7 +50,11 @@ class AddStudent(g.CreateAPIView):
     """
 
     serializer_class = StudentListSerializers
-#    renderer_classes = [JSONRenderer,TemplateHTMLRenderer]
+    renderer_classes = [JSONRenderer,TemplateHTMLRenderer]
+
+    def get(self, request, format=None):
+        serializer = StudentSerializer()
+        return Response({'serializer':serializer},template_name="add-student.html")
 
     def post(self, request, format=None):
         serializer = StudentSerializer(data=request.data)
@@ -232,7 +236,7 @@ def user_login(request):
                     user = authenticate(username=str(username),password=str(password))
                     auth_login(request, user)
                     success = True
-                    url = 'http://127.0.0.1:8008/api/token/'
+                    url = 'http://127.0.0.1:8000/api/token/'
                     params = {'username':username,'password':password}
                     result = requests.post(url,data=params)
                     request.session['HTTP_AUTHORIZATION'] = result.json().get('token')
