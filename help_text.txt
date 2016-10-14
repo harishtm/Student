@@ -1,0 +1,14 @@
+Links : For memcache 
+
+http://martinbrochhaus.com/caching.html
+
+Dummy Cache for local
+
+http://stackoverflow.com/questions/7602904/temporarily-disabling-django-caching
+
+https://jeffknupp.com/blog/2012/02/24/django-memcached-optimizing-django-through-caching/
+
+Cleararing Cache on Add/Edit an object
+
+http://stackoverflow.com/questions/1620072/in-django-how-to-clear-all-the-memcached-keys-and-values
+http://stackoverflow.com/questions/2268417/expire-a-view-cache-in-django
