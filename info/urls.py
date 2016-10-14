@@ -24,5 +24,10 @@ urlpatterns += patterns('',
     url(r'^studentAdd/$', StudentAdd.as_view(),name="student_add"),
 )
 
+urlpatterns += patterns('',
+    url(r'^cache-student-list/$', 'info.views.cache_student_list',name="cache_student_list"),
+)
+
+
 
 urlpatterns += router.urls

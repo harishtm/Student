@@ -8,7 +8,6 @@ from rest_framework.authtoken.models import Token
 class AuthenticationHeader(object):
 
     def process_request(self, request):
-#        import ipdb;ipdb.set_trace()
         path_list = request.path.split('/')
         allowed_list = ['admin','user-login','token']
         if request.META.get('HTTP_AUTHORIZATION',False):

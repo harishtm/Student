@@ -112,3 +112,50 @@ REST_FRAMEWORK = {
 #   ),
 #}
 
+#----------------------- Memcached -----------------------------#
+
+#http://martinbrochhaus.com/caching.html
+
+#CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
+
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION': '127.0.0.1:11211',
+#    }
+#}
+
+CACHE = True
+
+# Start memcached via:
+# memcached -d -m 50 -s $HOME/memcached.sock -P $HOME/memcached.pid
+# Stop it via:
+# kill $(cat $HOME/memcached.pid)
+
+if CACHE:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': 'unix:/home/mahiti/memcached.sock',
+        },
+    }
+    TEMPLATE_LOADERS = (
+        ('django.template.loaders.cached.Loader', (
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+        )),
+    )
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'yourproject_'
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+    TEMPLATE_LOADERS = (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+        'django.template.loaders.eggs.Loader',
+    )

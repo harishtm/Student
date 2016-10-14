@@ -1,0 +1,37 @@
+{% load cache %}
+
+<html>
+<head>
+    <title>Student Data</title>
+    <script src="/static/js/jquery-1.10.2.min.js"></script>
+</head>
+
+<body>
+{% cache 30 my_heavy_view_cache_key %}
+MEEE ==== {{ cache }} ==== {{ object_list }}
+{% if object_list %}
+    <table border=1 id="stdata">
+        <thead>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Phone</th>
+        </thead>
+        <tbody>
+            {% for obj in object_list %}
+                <tr>
+                    <td>{{ obj.name }}</td>
+                    <td>{{ obj.age }}</td>
+                    <td>{{ obj.address}}</td>
+                    <td>{{ obj.phone }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    No data to display
+{% endif %}
+{% endcache %}
+
+</body>
+</html>

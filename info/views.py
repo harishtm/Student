@@ -4,8 +4,7 @@ from info.serializers import *
 from info.models import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics as g
-from rest_framework import viewsets, permissions as p
+from rest_framework import status, generics as g, viewsets, permissions as p
 from authentication import *
 from django.contrib.auth import authenticate, login as auth_login, logout
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication, BaseAuthentication
@@ -19,6 +18,12 @@ from rest_framework.decorators import api_view, renderer_classes, detail_route, 
 import json
 import requests
 from rest_framework.pagination import PageNumberPagination
+from django.db.models.signals import post_save
+from django.core.cache import cache
+from hashlib import md5 as md5_constructor
+from django.utils.http import urlquote
+from django.core.cache.utils import make_template_fragment_key
+from django.views.decorators.cache import cache_page
 
 
 
@@ -305,23 +310,41 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
+#============================ Tried Memcached =================================#
+
+
+
+def invalidate_template_fragment(fragment_name, *variables):
+    cache_key = make_template_fragment_key(fragment_name, vary_on=variables) 
+    cache.delete(cache_key)
+
+
+@cache_page(30) # 600 seconds
+def cache_student_list(request):
+    object_list = []
+    if request.method == 'GET':
+        cache_key = 'my_heavy_view_cache_key'
+        #cache_time = 30 # time to live in seconds
+        cache.delete(cache_key)
+        result = cache.get(cache_key)
+        if not result:
+            object_list = Student.objects.all()
+            result = object_list# some calculations here
+            cache.set(cache_key, result)
+        invalidate_template_fragment(cache_key)
+    return render(request, 'cache-student-list.html', locals())
+
+
+def clear_cache(sender, **kwargs):
+    cache._cache.flush_all()
+
+
+post_save.connect(clear_cache, sender=Student)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#====================================== End of Memcached ======================#
 
 
 
