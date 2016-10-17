@@ -15,3 +15,5 @@ http://stackoverflow.com/questions/2268417/expire-a-view-cache-in-django
 
 
 Should Install Memcache in root user then other libraries in virtual enviroment
+
+memcached.pid and memcached.sock file will be created based on the path given in settings.py file
